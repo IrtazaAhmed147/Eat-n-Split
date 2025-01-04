@@ -10,3 +10,21 @@
     padding-top: 10%;
     background-color: #fffcf7;
 }
+
+.friendBox{
+    margin-left: 10%;
+}
+
+@media screen and (max-width: 860px) {
+    .friendBox{
+        margin-left: 5%;
+    }
+  }
+@media screen and (max-width: 770px) {
+    .friendBox{
+        margin-left: 0px;
+    }
+    .container-Box{
+        justify-content: center;
+    }
+  }
