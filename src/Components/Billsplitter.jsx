@@ -17,6 +17,21 @@ const Billsplitter = () => {
         }
     }, [])
 
+    useEffect(() => {
+        const bill = parseInt(billForm.Bill) || 0;
+        const yourExpense = parseInt(billForm.YourExpense) || 0;
+    
+        // Calculate friend's expense
+        const friendExpense = bill - yourExpense;
+    
+        // Update billForm with the calculated friend's expense
+        setBillForm((prev) => ({
+            ...prev,
+            [`${name}Expense`]: friendExpense > 0 ? friendExpense : 0, // Ensure no negative values
+        }));
+    }, [billForm.Bill, billForm.YourExpense, name]);
+    
+
     const handleAddFriend = () => {
         if (!form.name.trim() || !form.imageUrl.trim()) {
             return
@@ -50,6 +65,10 @@ const Billsplitter = () => {
 
         let bill = parseInt(billForm.Bill)
         let YourExpense = parseInt(billForm.YourExpense)
+        let friendEx = bill - YourExpense
+
+        // setBillForm({...billForm, name + 'Expense'})
+
         let friendExpense = parseInt(billForm[`${name}Expense`])
         let payer = billForm.payer ? billForm.payer : 'You'
 
@@ -110,27 +129,27 @@ const Billsplitter = () => {
         if (friendList) {
             setFriends(JSON.parse(friendList))
         }
-
+        setId(null)
         setBox(false)
         setBillForm({ Bill: '', YourExpense: '', payer: '' })
 
     }
 
 
-    const handleSelectedFriend = (name , id) => {
+    const handleSelectedFriend = (name, id) => {
         setId(id)
         setName(name)
         setIsModal(false)
         setBox(true)
     }
 
-    const handleRemoveUser = (id)=> {
+    const handleRemoveUser = (id) => {
         setBox(false)
         const permission = window.confirm('do you want to remove this friend?')
-        if(!permission) {
+        if (!permission) {
             return
         }
-        const updatedList = friends.filter((friend)=> {
+        const updatedList = friends.filter((friend) => {
             return friend.id !== id
         })
         localStorage.setItem('EatnSplitFriends', JSON.stringify(updatedList));
@@ -138,31 +157,38 @@ const Billsplitter = () => {
         if (friendList) {
             setFriends(JSON.parse(friendList))
         }
-        
+
     }
 
     return (
-        <div className='flex gap-3 flex-wrap container-Box'>
-            <div style={{ minWidth: '310px' }} className='flex flex-col friendBox' >
+        <div className='flex gap-3 flex-wrap w-4/5'>
+            <div style={{ minWidth: '310px' }} className='flex flex-col' >
                 <ul className='flex flex-col gap-3 '>
                     {friends.length === 0 && <p className='text-sm'>No Friends to Show</p>}
                     {friends?.map((friend) => {
-                        return <li key={friend.id} className='flex gap-2 items-center justify-between w-full'>
+                        return <li key={friend.id} style={{ backgroundColor: friend.id === id ? '#fff0d4' : '#fff' }} className='flex gap-2 items-center justify-between w-full p-2'>
                             <div className='flex gap-2 items-center'>
 
                                 <img style={{ borderRadius: '100%', height: '35px', width: '35px' }} src={friend.image} alt="friend" />
                                 <div className='text-sm '>
                                     <p className='font-medium'>{friend.name}</p>
-                                    {!friend.owe && !friend.YouOwe ? <p>You and {friend.name} are evenly</p> : ''}
+                                    {!friend.owe && !friend.YouOwe ? <p>You and {friend.name} are even</p> : ''}
                                     {friend.owe ? <p className='text-red-700 '>You owe {friend.name} {friend.owe}$</p> : ''}
-                                    {friend.YouOwe ? <p className='text-green-700'>{friend.name} owe You  {friend.YouOwe}$</p> : ''}
+                                    {friend.YouOwe ? <p className='text-green-700'>{friend.name} owes You  {friend.YouOwe}$</p> : ''}
 
                                 </div>
                             </div>
                             <div className='flex gap-1'>
 
-                                <button className='px-3 py-1 bg-orange-300 rounded-xl ms-3 hover:bg-orange-400' onClick={() => handleSelectedFriend(friend.name, friend.id)}>Select</button>
-                                <button className='p-1 flex items-center' onClick={()=> handleRemoveUser(friend.id)}>
+                                <button className='px-3 py-1 bg-orange-300 rounded-xl ms-3 hover:bg-orange-400' onClick={() => {
+                                    if (friend.id === id) {
+                                        setId(null)
+                                        setBox(false)
+                                        return
+                                    };
+                                    handleSelectedFriend(friend.name, friend.id)
+                                }}>{friend.id === id ? 'Close' : 'Select'}</button>
+                                <button className='p-1 flex items-center' onClick={() => handleRemoveUser(friend.id)}>
                                     <lord-icon
                                         src="https://cdn.lordicon.com/skkahier.json"
                                         trigger="hover"
@@ -211,25 +237,18 @@ const Billsplitter = () => {
                             <input value={form.imageUrl} name='imageUrl' onChange={handleChange} type="url" className='rounded-sm outline-none p-1 text-sm' />
                         </label>
                     </div>
-                    <button className='px-20 py-1 bg-orange-400 rounded-xl self-end mt-3' onClick={handleAddFriend}>Add</button>
+                    <button className='px-16 py-1 bg-orange-300 rounded-xl self-end mt-3' onClick={handleAddFriend}>Add</button>
                 </div>}
 
 
 
             </div>
 
-            {box && <div className='bg-orange-100 flex flex-col gap-2 p-3' style={{ minWidth: '370px' }}>
-                <div className='flex justify-between' onClick={() => setBox(false)}>
+            {box && <div className='bg-orange-100 flex flex-col gap-2 p-3' style={{ minWidth: '370px', minHeight: '280px' }}>
+                <div className='flex justify-between' >
 
-                    <h1>SPLIT A BILL WITH {name.toLocaleUpperCase()}</h1>
-                    <button>
-                        <lord-icon
-                            src="https://cdn.lordicon.com/zxvuvcnc.json"
-                            trigger="hover"
-                            colors="primary:#e86830"
-                            style={{ width: '25px', height: '25px' }}>
-                        </lord-icon>
-                    </button>
+                    <h1 style={{ color: '#495057', fontWeight: 'bold' }}>SPLIT A BILL WITH {name.toLocaleUpperCase()}</h1>
+                   
                 </div>
                 <label className='flex justify-between' htmlFor="Bill">
                     <p className='flex items-center gap-0.5 text-sm'>
@@ -265,7 +284,7 @@ const Billsplitter = () => {
                         {name}'s expense
                     </p>
 
-                    <input className='outline-none text-sm p-1 rounded-md' value={billForm[`${name}Expense`] || ''} name={`${name}Expense`} onChange={handleBillForm} type="number" />
+                    <input readOnly={true} className='outline-none text-sm p-1 rounded-md' value={billForm[`${name}Expense`] || ''} name={`${name}Expense`}  type="number" />
                 </label>
                 <label className='flex justify-between' htmlFor="payer">
                     <p className='flex items-center gap-0.5 text-sm'>
@@ -283,7 +302,7 @@ const Billsplitter = () => {
                     </select>
                 </label>
 
-                <button onClick={splitBill} className='px-20 py-1 bg-orange-400 rounded-xl self-end mt-3'>Split bill</button>
+                <button onClick={splitBill} className='px-14 py-1 bg-orange-300 rounded-xl self-end mt-3'>Split bill</button>
             </div>}
         </div>
     )
