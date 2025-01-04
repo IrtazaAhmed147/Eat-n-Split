@@ -1,10 +1,11 @@
 import './App.css';
+import Billsplitter from './Components/Billsplitter';
 import './index.css'
 function App() {
   return (
-    <div >
-      <h1>Starting</h1>
-    </div>
+    <>
+      <Billsplitter /> 
+    </>
   );
 }
 
