@@ -20,17 +20,15 @@ const Billsplitter = () => {
     useEffect(() => {
         const bill = parseInt(billForm.Bill) || 0;
         const yourExpense = parseInt(billForm.YourExpense) || 0;
-    
-        // Calculate friend's expense
+
         const friendExpense = bill - yourExpense;
-    
-        // Update billForm with the calculated friend's expense
+
         setBillForm((prev) => ({
             ...prev,
-            [`${name}Expense`]: friendExpense > 0 ? friendExpense : 0, // Ensure no negative values
+            [`${name}Expense`]: friendExpense > 0 ? friendExpense : 0,
         }));
     }, [billForm.Bill, billForm.YourExpense, name]);
-    
+
 
     const handleAddFriend = () => {
         if (!form.name.trim() || !form.imageUrl.trim()) {
@@ -65,9 +63,7 @@ const Billsplitter = () => {
 
         let bill = parseInt(billForm.Bill)
         let YourExpense = parseInt(billForm.YourExpense)
-        let friendEx = bill - YourExpense
 
-        // setBillForm({...billForm, name + 'Expense'})
 
         let friendExpense = parseInt(billForm[`${name}Expense`])
         let payer = billForm.payer ? billForm.payer : 'You'
@@ -161,8 +157,8 @@ const Billsplitter = () => {
     }
 
     return (
-        <div className='flex gap-3 flex-wrap w-4/5'>
-            <div style={{ minWidth: '310px' }} className='flex flex-col' >
+        <div className='flex gap-3 flex-wrap w-11/12  mt-28'>
+            <div style={{ width: '350px' }} className='flex flex-col' >
                 <ul className='flex flex-col gap-3 '>
                     {friends.length === 0 && <p className='text-sm'>No Friends to Show</p>}
                     {friends?.map((friend) => {
@@ -172,9 +168,9 @@ const Billsplitter = () => {
                                 <img style={{ borderRadius: '100%', height: '35px', width: '35px' }} src={friend.image} alt="friend" />
                                 <div className='text-sm '>
                                     <p className='font-medium'>{friend.name}</p>
-                                    {!friend.owe && !friend.YouOwe ? <p>You and {friend.name} are even</p> : ''}
-                                    {friend.owe ? <p className='text-red-700 '>You owe {friend.name} {friend.owe}$</p> : ''}
-                                    {friend.YouOwe ? <p className='text-green-700'>{friend.name} owes You  {friend.YouOwe}$</p> : ''}
+                                    {!friend.owe && !friend.YouOwe ? <p>you and {friend.name} are even</p> : ''}
+                                    {friend.owe ? <p className='text-red-700 '>you owe {friend.name} {friend.owe}$</p> : ''}
+                                    {friend.YouOwe ? <p className='text-green-700'>{friend.name} owes you  {friend.YouOwe}$</p> : ''}
 
                                 </div>
                             </div>
@@ -244,11 +240,11 @@ const Billsplitter = () => {
 
             </div>
 
-            {box && <div className='bg-orange-100 flex flex-col gap-2 p-3' style={{ minWidth: '370px', minHeight: '280px' }}>
+            {box && <div className='bg-orange-100 flex flex-col gap-2 p-3 w-[22rem]' style={{ minHeight: '280px', maxHeight: '300px' }}>
                 <div className='flex justify-between' >
 
                     <h1 style={{ color: '#495057', fontWeight: 'bold' }}>SPLIT A BILL WITH {name.toLocaleUpperCase()}</h1>
-                   
+
                 </div>
                 <label className='flex justify-between' htmlFor="Bill">
                     <p className='flex items-center gap-0.5 text-sm'>
@@ -284,7 +280,7 @@ const Billsplitter = () => {
                         {name}'s expense
                     </p>
 
-                    <input readOnly={true} className='outline-none text-sm p-1 rounded-md' value={billForm[`${name}Expense`] || ''} name={`${name}Expense`}  type="number" />
+                    <input readOnly={true} className='outline-none text-sm p-1 rounded-md' value={billForm[`${name}Expense`] || ''} name={`${name}Expense`} type="number" />
                 </label>
                 <label className='flex justify-between' htmlFor="payer">
                     <p className='flex items-center gap-0.5 text-sm'>
